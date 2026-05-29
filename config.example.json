@@ -1,0 +1,42 @@
+{
+  "bot_token": "YOUR_BOT_TOKEN_HERE",
+  "message": "Hello *world* this is **bold** and `code`",
+  "parse_mode": "MarkdownV2",
+  "_comment_groups": "When groups is present, messages are sent to those specific groups",
+  "groups": [
+    {
+      "id": -1001234567890,
+      "name": "Engineering Team"
+    },
+    {
+      "id": -1009876543210,
+      "name": "Marketing Alerts"
+    }
+  ],
+  "_comment_auto": "Remove the groups field above to auto-discover groups from Telegram updates",
+  "_comment_media": "Uncomment ONE media block below to send media with caption",
+  "_media_examples": {
+    "_comment_photo": "Send a single image (jpg, png, gif)",
+    "_photo_example": {
+      "media_file": "image.jpg",
+      "media_type": "photo"
+    },
+    "_comment_video": "Send a video (mp4, mov)",
+    "_video_example": {
+      "media_file": "video.mp4",
+      "media_type": "video"
+    },
+    "_comment_document": "Send any file (pdf, zip, etc)",
+    "_document_example": {
+      "media_file": "report.pdf",
+      "media_type": "document"
+    },
+    "_comment_url": "Or use a URL instead of a local file",
+    "_url_example": {
+      "media_file": "https://example.com/image.jpg",
+      "media_type": "photo"
+    }
+  },
+  "_media_file": "image.jpg",
+  "_media_type": "photo"
+}

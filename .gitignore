@@ -1,0 +1,26 @@
+# Build artifacts
+sf
+sf-linux
+sf.exe
+*.exe
+
+# Logs
+sf.log
+*.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies (should be fetched with go mod)
+vendor/
+
+# Opencode internal
+.omo/
