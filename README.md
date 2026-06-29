@@ -1,4 +1,4 @@
-# Telegram Broadcast Bot
+# simple forwarder (sf) - Telegram Broadcast Bot
 
 A simple, cross-platform Go application that broadcasts messages to multiple Telegram groups using the [telego](https://github.com/mymmrac/telego) library. Configuration is externalized to a JSON file — no hardcoded tokens or group IDs.
 
@@ -60,14 +60,14 @@ cp config.example.json config.json
 
 ### Config Fields
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `bot_token` | string | Yes | Your Telegram bot token from @BotFather |
-| `groups` | array of objects | No | List of target groups. When empty or omitted, the bot auto-discovers groups from recent Telegram updates |
-| `message` | string | Yes | The message to broadcast. When `media_file` is set, this becomes the media caption |
-| `parse_mode` | string | No | `"MarkdownV2"` or `"Markdown"`. Defaults to `"MarkdownV2"` if empty |
-| `media_file` | string | No | Path, URL, or Telegram file ID of media to send. When set, `message` becomes the caption |
-| `media_type` | string | No | `"photo"` or `"document"`. Defaults to `"photo"` if empty. Only used when `media_file` is set |
+| Field        | Type             | Required | Description                                                                                              |
+| ------------ | ---------------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| `bot_token`  | string           | Yes      | Your Telegram bot token from @BotFather                                                                  |
+| `groups`     | array of objects | No       | List of target groups. When empty or omitted, the bot auto-discovers groups from recent Telegram updates |
+| `message`    | string           | Yes      | The message to broadcast. When `media_file` is set, this becomes the media caption                       |
+| `parse_mode` | string           | No       | `"MarkdownV2"` or `"Markdown"`. Defaults to `"MarkdownV2"` if empty                                      |
+| `media_file` | string           | No       | Path, URL, or Telegram file ID of media to send. When set, `message` becomes the caption                 |
+| `media_type` | string           | No       | `"photo"` or `"document"`. Defaults to `"photo"` if empty. Only used when `media_file` is set            |
 
 ### Example `config.json`
 
@@ -99,12 +99,14 @@ Copy from `config.example.json` and fill in your values:
 Group IDs like `-1001234567890` are meaningless at a glance. Adding a `name` makes logs self-documenting:
 
 **Without names (hard to read):**
+
 ```
 send failed  group_id=-1001234567890  error="Forbidden..."
 send failed  group_id=-1009876543210  error="Forbidden..."
 ```
 
 **With names (immediately clear):**
+
 ```
 send failed  group="Engineering Team (-1001234567890)"  error="Forbidden..."
 send failed  group="Marketing Alerts (-1009876543210)"  error="Forbidden..."
@@ -118,26 +120,26 @@ You can optionally attach a media file (image, video, or document) to your broad
 
 **Supported media types:**
 
-| Type | `media_type` | Supported Formats | Notes |
-|---|---|---|---|
-| **Image** | `"photo"` | jpg, png, gif | Best for photos and screenshots |
-| **Video** | `"video"` | mp4, mov | Best for video clips |
-| **Document** | `"document"` | pdf, zip, any | Best for files that shouldn't be compressed |
+| Type         | `media_type` | Supported Formats | Notes                                       |
+| ------------ | ------------ | ----------------- | ------------------------------------------- |
+| **Image**    | `"photo"`    | jpg, png, gif     | Best for photos and screenshots             |
+| **Video**    | `"video"`    | mp4, mov          | Best for video clips                        |
+| **Document** | `"document"` | pdf, zip, any     | Best for files that shouldn't be compressed |
 
 **Supported file sources:**
 
-| Source | Example | Notes |
-|---|---|---|
-| **Local file** | `"image.jpg"` | Relative or absolute path on disk |
-| **URL** | `"https://example.com/image.jpg"` | Telegram downloads the file |
-| **Telegram file ID** | `"AgADBAAD..."` | Reuses an already-uploaded file (fastest) |
+| Source               | Example                           | Notes                                     |
+| -------------------- | --------------------------------- | ----------------------------------------- |
+| **Local file**       | `"image.jpg"`                     | Relative or absolute path on disk         |
+| **URL**              | `"https://example.com/image.jpg"` | Telegram downloads the file               |
+| **Telegram file ID** | `"AgADBAAD..."`                   | Reuses an already-uploaded file (fastest) |
 
 **Example with image:**
 
 ```json
 {
   "bot_token": "123456:ABC-DEF...",
-  "groups": [{"id": -1001234567890, "name": "Engineering Team"}],
+  "groups": [{ "id": -1001234567890, "name": "Engineering Team" }],
   "message": "Check out this **awesome** photo!",
   "parse_mode": "MarkdownV2",
   "media_file": "assets/screenshot.png",
@@ -251,8 +253,8 @@ go run . -config=/path/to/config.json
 
 ### Command-Line Flags
 
-| Flag | Default | Description |
-|---|---|---|
+| Flag      | Default       | Description                         |
+| --------- | ------------- | ----------------------------------- |
 | `-config` | `config.json` | Path to the JSON configuration file |
 
 ### Automatic Group Discovery
@@ -274,17 +276,20 @@ With this `config.json`:
 ```
 
 **How it works:**
+
 1. The bot fetches recent updates via the Telegram Bot API (`getUpdates`)
 2. Extracts unique group/supergroup/channel IDs where the bot has received messages
 3. Deduplicates them automatically
 4. Sends the message once per discovered group
 
 **Requirements:**
+
 - The bot must have received at least one message in each target group recently
 - Groups without recent activity won't appear
 - You can verify available updates manually: `https://api.telegram.org/bot<TOKEN>/getUpdates`
 
 **When to use manual groups:**
+
 - You need precise control over which groups receive messages
 - You want human-readable names in logs
 - You need to send to groups without recent updates
@@ -298,6 +303,7 @@ The application uses Go's structured logging (`log/slog`) to provide clear outpu
 ### Success Log Example
 
 When a group has a `name` in config:
+
 ```
 time=2024-05-21T10:30:00.000Z level=INFO msg="send succeeded" group="Engineering Team (-1001234567890)" sent_at=2024-05-21T10:30:00.000Z
 time=2024-05-21T10:30:01.000Z level=INFO msg="send succeeded" group="Marketing Alerts (-1009876543210)" sent_at=2024-05-21T10:30:01.000Z
@@ -305,6 +311,7 @@ time=2024-05-21T10:30:01.000Z level=INFO msg="broadcast complete" total=2 succee
 ```
 
 When a group has no `name`:
+
 ```
 time=2024-05-21T10:30:00.000Z level=INFO msg="send succeeded" group_id=-1001234567890 sent_at=2024-05-21T10:30:00.000Z
 ```
@@ -312,6 +319,7 @@ time=2024-05-21T10:30:00.000Z level=INFO msg="send succeeded" group_id=-10012345
 ### Media Log Example
 
 When `media_file` is set, logs include the media type:
+
 ```
 time=2024-05-21T10:30:00.000Z level=INFO msg="send succeeded" group="Engineering Team (-1001234567890)" media_type=photo sent_at=2024-05-21T10:30:00.000Z
 time=2024-05-21T10:30:01.000Z level=ERROR msg="send failed" group="Marketing Alerts (-1009876543210)" media_type=document error="Bad Request: file is too big"
@@ -328,21 +336,21 @@ time=2024-05-21T10:30:01.000Z level=INFO msg="broadcast complete" total=2 succee
 
 ### Common Errors
 
-| Error | Meaning | Action |
-|---|---|---|
-| `Forbidden: bot was kicked from the group chat` | Bot was removed/banned from the group | Re-add the bot or remove the group ID from config |
-| `Bad Request: chat not found` | Group no longer exists or ID is wrong | Verify the group ID |
-| `Forbidden: bot is not a member of the group chat` | Bot was never added or was removed | Add the bot to the group |
-| `Bad Request: can't parse entities` | Markdown formatting is invalid | Check your message for unescaped characters |
-| `Bad Request: file is too big` | Media file exceeds Telegram limits (10 MB for photos, 50 MB for documents/videos) | Compress the file or use a smaller version |
-| `resolve media file: ...` | Failed to open local media file | Check the file path exists and is readable |
+| Error                                              | Meaning                                                                           | Action                                            |
+| -------------------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `Forbidden: bot was kicked from the group chat`    | Bot was removed/banned from the group                                             | Re-add the bot or remove the group ID from config |
+| `Bad Request: chat not found`                      | Group no longer exists or ID is wrong                                             | Verify the group ID                               |
+| `Forbidden: bot is not a member of the group chat` | Bot was never added or was removed                                                | Add the bot to the group                          |
+| `Bad Request: can't parse entities`                | Markdown formatting is invalid                                                    | Check your message for unescaped characters       |
+| `Bad Request: file is too big`                     | Media file exceeds Telegram limits (10 MB for photos, 50 MB for documents/videos) | Compress the file or use a smaller version        |
+| `resolve media file: ...`                          | Failed to open local media file                                                   | Check the file path exists and is readable        |
 
 ### Exit Codes
 
-| Code | Meaning |
-|---|---|
-| `0` | All messages sent successfully |
-| `1` | Config error, bot initialization failed, or one/more groups failed |
+| Code | Meaning                                                            |
+| ---- | ------------------------------------------------------------------ |
+| `0`  | All messages sent successfully                                     |
+| `1`  | Config error, bot initialization failed, or one/more groups failed |
 
 ### Log File Output
 
@@ -413,14 +421,14 @@ config.json → LoadConfig() → validate() → NewBotService() → Broadcast()
 
 When using `parse_mode: MarkdownV2`, escape these characters with a backslash: `_`, `*`, `[`, `]`, `(`, `)`, `~`, `` ` ``, `>`, `#`, `+`, `-`, `=`, `|`, `{`, `}`, `.`, `!`.
 
-| Format | Syntax | Example |
-|---|---|---|
-| Bold | `**text**` | `**bold**` |
-| Italic | `__text__` | `__italic__` |
-| Code inline | `` `code` `` | `` `inline code` `` |
-| Code block | ` ```code``` ` | ` ```block``` ` |
-| Strikethrough | `~~text~~` | `~~strikethrough~~` |
-| Link | `[text](URL)` | `[Google](https://google.com)` |
+| Format        | Syntax         | Example                        |
+| ------------- | -------------- | ------------------------------ |
+| Bold          | `**text**`     | `**bold**`                     |
+| Italic        | `__text__`     | `__italic__`                   |
+| Code inline   | `` `code` ``   | `` `inline code` ``            |
+| Code block    | ` ```code``` ` | ` ```block``` `                |
+| Strikethrough | `~~text~~`     | `~~strikethrough~~`            |
+| Link          | `[text](URL)`  | `[Google](https://google.com)` |
 
 ---
 
